@@ -24,11 +24,11 @@ nano ~/.bashrc
 ```
 THÊM lệnh sau vào bashrc/zshrc (KHÔNG PHẢI VIẾT LẠI MÀ LÀ THÊM)
 ``` bash
-# --- Bắt đầu Hook cho secure-dir (Đã Sửa) ---
+# --- Bắt đầu Hook cho secure-dir ---
 # Tên thư mục bảo mật
 SECURE_DIR_NAME="secure-dir"
 # Tên script xác thực (Wrapper Shell)
-AUTH_SCRIPT_NAME="_init.sh"
+AUTH_SCRIPT_NAME=".init.sh"
 
 # Lưu lệnh cd gốc
 alias real_cd="builtin cd"
@@ -41,11 +41,11 @@ cd() {
     # Chỉ xử lý nếu mục tiêu là thư mục bảo mật của chúng ta
     if [ "$(basename "$TARGET_DIR")" = "$SECURE_DIR_NAME" ] || [ "$TARGET_DIR" = "$SECURE_DIR_NAME" ]; then
 
-        # Đường dẫn tuyệt đối đến file _init.sh
+        # Đường dẫn tuyệt đối đến file .init.sh
         # Giả sử thư mục secure-dir nằm ngay trong thư mục hiện tại khi gọi cd
         local SCRIPT_PATH="./$SECURE_DIR_NAME/$AUTH_SCRIPT_NAME"
 
-        # Kiểm tra sự tồn tại của script (_init.sh)
+        # Kiểm tra sự tồn tại của script (.init.sh)
         if [ ! -f "$SCRIPT_PATH" ]; then
             echo "Lỗi: Không tìm thấy $SECURE_DIR_NAME/$AUTH_SCRIPT_NAME."
             real_cd "$@"
