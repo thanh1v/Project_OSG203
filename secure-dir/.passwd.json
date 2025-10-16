@@ -1,14 +1,14 @@
 {
     "admin": {
         "role": "admin",
-        "password": "admin"
+        "password": "1e288a1b6674fc27233982f42790ae20a1d0554a8389fff0dd47f4be87dbd77f"
     },
     "user1": {
         "role": "user",
-        "password": "123"
+        "password": "c99cd40b8da167d250ce262d8ad792d651d3fce021489adb94378411d6b232f5"
     },
     "user2": {
         "role": "user",
-        "password": "abc"
+        "password": "d045b704413d0e3a29ca5a8cf804710ed1065d26e53dea9eeca7c8b5ed0e202f"
     }
 }
