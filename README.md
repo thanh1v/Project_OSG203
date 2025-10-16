@@ -2,12 +2,12 @@
 # Title: Secure Linux File System
 
 Mô tả: 
-- Khời tạo 1 file được bảo vệ trong môi trường Linux.
+- Mã hóa và bảo về 1 thư mục đặc biệt trong môi trường Linux.
 - Cần đăng nhập để truy cập vào file này.
+- Mật khẩu lưu trữ được mã hóa AES-128.
 
-
-# Yêu cầu để hoạt động
-## Tải Python cho Linux
+# Các tài nguyên cần thiết
+## Python cho Linux
 - Ubuntu/Desbian
 ``` bash
 sudo apt install python3
@@ -17,12 +17,29 @@ sudo apt install python3
 sudo dnf install python3
 ```
 
-## Làm theo các lệnh sau
+## Cryptodome
+- Ubuntu/Desbian
+``` bash
+sudo apt install python3-pip -y
+pip3 install pycryptodome
+```
+- CentOS/Red Hat
+``` bash
+sudo dnf install python3-pip -y
+pip3 install pycryptodome
+```
+
+# Cách cài đặt file
+## Tải file 
+```bash
+git clone https://github.com/thanh1v/Project_OSG203/
+```
+## Sửa Shell
 ```bash
 nano ~/.bashrc
 # hoặc nano ~/.zshrc nếu bạn dùng Zsh
 ```
-THÊM lệnh sau vào bashrc/zshrc (KHÔNG PHẢI VIẾT LẠI MÀ LÀ THÊM)
+- THÊM lệnh sau vào bashrc/zshrc (KHÔNG PHẢI VIẾT LẠI MÀ LÀ THÊM)
 ``` bash
 # --- Bắt đầu Hook cho secure-dir ---
 # Tên thư mục bảo mật
