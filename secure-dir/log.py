@@ -1,83 +1,53 @@
-#!/usr/bin/env python3
-
-import getpass
-import sys
-import json
+import logging
 import os
-import log
+from datetime import datetime, timedelta
+
+# Đặt log file cùng thư mục với script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, "login.log")
+
+# Cấu hình logging
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s",
+    force=True
+)
+
+def log_login(user):
+    """Ghi nhận sự kiện đăng nhập"""
+    logging.info(f"LOGIN user={user}")
+
+def check_alerts(user):
+    """Kiểm tra số lần đăng nhập và cảnh báo"""
+    if not os.path.exists(LOG_FILE):
+        return
+
+    now = datetime.now()
+    today = now.date()
+    five_min_ago = now - timedelta(minutes=5)
+
+    daily_count = 0
+    window_count = 0
+
+    with open(LOG_FILE, "r") as f:
+        for line in f:
+            if f"user={user}" in line:
+                ts_str = line.split(" - ")[0]
+                ts = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S,%f")
+
+                if ts.date() == today:
+                    daily_count += 1
+                if ts >= five_min_ago:
+                    window_count += 1
+
+    if daily_count > 10:
+        print(f"[ALERT] User {user} đăng nhập {daily_count} lần hôm nay (>10)")
+    if window_count >= 3:
+        print(f"[ALERT] User {user} đăng nhập {window_count} lần trong 5 phút")
+def handle_login(user):
+    log_login(user)
+    check_alerts(user)
 
 
-# Đọc file .encrypt.py
-import importlib.util
-current_dir = os.path.dirname(os.path.abspath(__file__))
-module_path = os.path.join(current_dir, ".encrypt.py")
-
-spec = importlib.util.spec_from_file_location("aes", module_path)
-aes = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(aes)
-# Gọi hàm trong file
-# aes.ten_ham_can_dung()
-
-
-MAX_ATTEMPTS = 3
-
-# Hàm đọc file passwd.json
-def read_passwd():
-    """Đọc dữ liệu tài khoản từ file JSON nằm cùng thư mục script."""
-    # Lấy đường dẫn tuyệt đối tới file hiện tại
-    script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
-    json_path = os.path.join(script_dir, ".passwd.json")
-
-    if not os.path.exists(json_path):
-        print(f"Không tìm thấy file JSON tại: {json_path}")
-        return False
-
-    try:
-        with open(json_path, 'r') as f:
-            accounts = json.load(f)
-            return accounts
-    except json.JSONDecodeError:
-        print(f"Lỗi: {json_path} không phải định dạng JSON hợp lệ")
-        return False
-
-
-# Đăng nhập
-def authenticate():
-    """Yêu cầu người dùng nhập mật khẩu."""
-    attempts = 0
-    accounts = read_passwd()
-    while attempts < MAX_ATTEMPTS:
-        # getpass ẩn đầu vào mật khẩu
-        username_input = input("Nhập username: ")
-        password_input = getpass.getpass("Nhập password: ")
-
-        if username_input in accounts:
-            account_data = accounts[username_input]
-            enc_password = account_data.get("password")
-            plt_password = aes.aes_decrypt(aes.key, enc_password)
-
-            if password_input == plt_password:
-                role = account_data.get("role")                     # chưa sử dụng!!
-                print("=== Đăng nhập thành công ===")
-                print(f"Chào mừng {username_input}")
-                log.handle_login(username_input)
-                return True
-        else:
-            attempts += 1
-            remaining = MAX_ATTEMPTS - attempts
-            if remaining > 0:
-                print(f"Sai username hoặc mật khẩu. Còn {remaining} lần thử.")
-            else:
-                print("Bạn đã nhập sai 3 lần. Truy cập bị từ chối.")
-
-    return False
-
-
-
-if __name__ == "__main__":
-    if authenticate():
-        # Trả về 0 (thành công) cho Shell
-        sys.exit(0)
-    else:
-        # Trả về 1 (thất bại) cho Shell
-        sys.exit(1)
+    
