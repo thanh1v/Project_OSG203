@@ -59,6 +59,14 @@ def authenticate():
                 print("=== Đăng nhập thành công ===")
                 print(f"Chào mừng {username_input}")
                 return True
+
+            else:
+                attempts += 1
+                remaining = MAX_ATTEMPTS - attempts
+                if remaining > 0:
+                    print(f"Sai username hoặc mật khẩu. Còn {remaining} lần thử.")
+                else:
+                    print("Bạn đã nhập sai 3 lần. Truy cập bị từ chối.")
         else:
             attempts += 1
             remaining = MAX_ATTEMPTS - attempts
