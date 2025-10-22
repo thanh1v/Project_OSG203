@@ -59,7 +59,7 @@ def authenticate():
                 role = account_data.get("role")                     # chưa sử dụng!!
                 print("=== Đăng nhập thành công ===")
                 print(f"Chào mừng {username_input}")
-                log.handle_login(username_input)
+                log.handle_login(username_input,role)
                 return True
 
             else:
