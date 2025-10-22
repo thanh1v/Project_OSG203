@@ -4,6 +4,7 @@ import getpass
 import sys
 import json
 import os
+import log
 
 # Đọc file .encrypt.py
 import importlib.util
@@ -58,6 +59,7 @@ def authenticate():
                 role = account_data.get("role")                     # chưa sử dụng!!
                 print("=== Đăng nhập thành công ===")
                 print(f"Chào mừng {username_input}")
+                log.handle_login(username_input)
                 return True
 
             else:
