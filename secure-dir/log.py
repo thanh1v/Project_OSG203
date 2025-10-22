@@ -14,9 +14,9 @@ logging.basicConfig(
     force=True
 )
 
-def log_login(user):
+def log_login(user,role):
     """Ghi nhận sự kiện đăng nhập"""
-    logging.info(f"LOGIN user={user}")
+    logging.info(f"LOGIN {user} - {role}")
 
 def check_alerts(user):
     """Kiểm tra số lần đăng nhập và cảnh báo"""
@@ -45,8 +45,8 @@ def check_alerts(user):
         print(f"[ALERT] User {user} đăng nhập {daily_count} lần hôm nay (>10)")
     if window_count >= 3:
         print(f"[ALERT] User {user} đăng nhập {window_count} lần trong 5 phút")
-def handle_login(user):
-    log_login(user)
+def handle_login(user,role):
+    log_login(user,role)
     check_alerts(user)
 
 
