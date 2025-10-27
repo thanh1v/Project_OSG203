@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+
+import os
+import json
+import sys
+
+# Đọc file .encrypt.py
+import importlib.util
+current_dir = os.path.dirname(os.path.abspath(__file__))
+module_path = os.path.join(current_dir, ".encrypt.py")
+
+spec = importlib.util.spec_from_file_location("aes", module_path)
+aes = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(aes)
+# Gọi hàm trong file
+# aes.ten_ham_can_dung()
+
+# Xác định đường dẫn file password
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PASSWD_PATH = os.path.join(SCRIPT_DIR, ".passwd.json")
+
+def read_json():
+    try:
+        with open(PASSWD_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data
+        
+    except FileNotFoundError:
+        print("Không tìm thấy file .passwd.json")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print("File .passwd.json lỗi hoặc rỗng")
+        sys.exit(1)
+
+def dump_json(data):
+    try:
+        with open(PASSWD_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+    except Exception as e:
+        print(f"Lỗi khi ghi file: {e}")
+        sys.exit(1)
+
+def main():
+    # Check tham số đầu vào
+    if len(sys.argv) != 2:
+        print("Cách dùng: python DelUser.py <username>")
+        sys.exit(1)
+
+    username = sys.argv[1].strip()
+
+    data = read_json()
+
+    if username not in data:
+        print(f"Tài khoản '{username}' không tồn tại.")
+        sys.exit(1)
+
+    confirm = input(f"Bạn có chắc chắn muốn xóa tài khoản '{username}'? (y/n): ").strip().lower()
+    if confirm not in ["y", "yes"]:
+        print("Đã hủy thao tác.")
+        sys.exit(0)
+
+    # Xóa user
+    del data[username]
+    dump_json(data)
+    print(f"Đã xóa tài khoản '{username}'.")
+
+if __name__ == "__main__":
+    main()
