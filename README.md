@@ -2,9 +2,12 @@
 # Title: Secure Linux File System
 
 Mô tả: 
+Sử dụng các công cụ AI để xây dựng hệ thống bảo mật file trong Linux.
+- Tận dụng AI để sửa lỗi và giải quyết edge cases.
 - Mã hóa và bảo về 1 thư mục đặc biệt trong môi trường Linux.
 - Cần đăng nhập để truy cập vào file này.
 - Mật khẩu lưu trữ được mã hóa AES-128.
+
 
 # Các tài nguyên cần thiết
 ## Python cho Linux
