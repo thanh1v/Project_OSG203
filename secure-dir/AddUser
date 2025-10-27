@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+
+import os
+import json
+import sys
+import re
+
+# Đọc file .encrypt.py
+import importlib.util
+current_dir = os.path.dirname(os.path.abspath(__file__))
+module_path = os.path.join(current_dir, ".encrypt.py")
+
+spec = importlib.util.spec_from_file_location("aes", module_path)
+aes = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(aes)
+# Gọi hàm trong file
+# aes.ten_ham_can_dung()
+
+# Xaác định thư mục của script
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PASSWD_PATH = os.path.join(SCRIPT_DIR, ".passwd.json")
+
+def read_json():
+    try:
+        with open(PASSWD_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data
+        
+    except FileNotFoundError:
+        print("Không tìm thấy file .passwd.json")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print("File .passwd.json lỗi hoặc rỗng")
+        sys.exit(1)
+
+def dump_json(data):
+    try:
+        if not os.path.exists(".passwd.json"):
+            raise FileNotFoundError
+        
+        with open(PASSWD_PATH,"w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+            print("Đã thêm account!")
+
+    except Exception as e:
+        print(f"Lỗi khi ghi file: {e}")
+        sys.exit(1)
+
+
+role_list=["admin","user"]
+
+def main():
+    # Check tham số đầu vào
+    if len(sys.argv) != 4:
+        print("Cách dùng: python AddUser.py <username> <password> <role>")
+        sys.exit(1)
+
+    username, password, role = sys.argv[1].strip(), sys.argv[2].strip(), sys.argv[3].strip().lower()
+
+    # Check role
+    if role not in role_list:
+        print("Role không phải admin/user")
+        sys.exit(1)
+
+    data = read_json()
+    # Xử lý username
+    if not re.match(r"^[A-Za-z0-9_.-]+$", username):
+        print("Lỗi: Username chỉ được chứa chữ, số, gạch dưới, gạch ngang, dấu chấm.")
+        sys.exit(1)
+    if username in data:
+        print(f"Tài khoản '{username}' đã tồn tại.")
+        comfirm = input(f"Có muốn ghi đè {username} hay không? (y/n)").lower()
+    else:
+        comfirm = "y"
+
+    # Thêm user
+    if comfirm in ["y","yes"]:
+        data[username] = {
+            "role": role,
+            "password": aes.aes_encrypt(aes.key, password)
+        }
+        dump_json(data)
+    else:
+        sys.exit(0)
+
+if __name__ == "__main__":
+    main()
