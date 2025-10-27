@@ -5,6 +5,7 @@ import sys
 import json
 import os
 import log
+import secure_shell
 
 # Đọc file .encrypt.py
 import importlib.util
@@ -60,6 +61,7 @@ def authenticate():
                 print("=== Đăng nhập thành công ===")
                 print(f"Chào mừng {username_input}")
                 log.handle_login(username_input,role)
+                secure_shell.access(role)
                 return True
 
             else:
