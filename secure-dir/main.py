@@ -63,8 +63,10 @@ def authenticate():
                 log.handle_login(username_input,role)
                 secure_shell.access(role)
                 return True
-
+            
             else:
+                role = account_data.get("role")
+                log.handle_login_fail(username_input, role)
                 attempts += 1
                 remaining = MAX_ATTEMPTS - attempts
                 if remaining > 0:
@@ -72,6 +74,7 @@ def authenticate():
                 else:
                     print("Bạn đã nhập sai 3 lần. Truy cập bị từ chối.")
         else:
+            log.handle_login_fail(username_input, "unknown")
             attempts += 1
             remaining = MAX_ATTEMPTS - attempts
             if remaining > 0:
