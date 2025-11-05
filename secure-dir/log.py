@@ -3,7 +3,6 @@ import os
 from datetime import datetime, timedelta
 
 # Đặt log file cùng thư mục với script
-#LOG_FILE = "login.log"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, "login.log")
 
@@ -15,12 +14,9 @@ logging.basicConfig(
     force=True
 )
 
-def log_event(user, role, event_type, status=None):
-    
-    if status:
-        logging.info(f"{event_type.upper()} {user} - {role} - {status}")
-    else:
-        logging.info(f"{event_type.upper()} {user} - {role}")
+def log_login(user, role):
+    """Ghi nhận sự kiện đăng nhập"""
+    logging.info(f"LOGIN {user} - {role}")
 
 def check_alerts(user):
     """Kiểm tra số lần đăng nhập và cảnh báo"""
@@ -36,7 +32,7 @@ def check_alerts(user):
 
     with open(LOG_FILE, "r") as f:
         for line in f:
-            if f"LOGIN {user}" in line:
+            if f"user={user}" in line:
                 ts_str = line.split(" - ")[0]
                 ts = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S,%f")
 
@@ -50,15 +46,6 @@ def check_alerts(user):
     if window_count >= 3:
         print(f"[ALERT] User {user} đăng nhập {window_count} lần trong 5 phút")
 
-def handle_login(user, role):    
-    log_event(user, role, "login", "success")
+def handle_login(user, role):
+    log_login(user, role)
     check_alerts(user)
-
-def handle_login_fail(user, role="unknown"):
-    log_event(user, role, "login", "fail")
-
-def handle_logout(user, role):
-    log_event(user, role, "logout")
-
-
-    
