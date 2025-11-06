@@ -63,6 +63,7 @@ def main():
     analyze_file(file_to_analyze)
 
 def analyze_file(file_path):
+    print("***Truy cập vào trang web https://aistudio.google.com/app/u/1/api-keys để lấy Gemini API key.***\n")
     add_key()
     model = llm.get_model("gemini-2.5-flash")
 
