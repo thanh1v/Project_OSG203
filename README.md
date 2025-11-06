@@ -28,7 +28,12 @@ sudo dnf install python3-pip -y
 pip3 install pycryptodome
 pip3 install llm
 ```
-# Sửa Shell
+# Cách cài đặt file
+## Tải file 
+```bash
+git clone https://github.com/thanh1v/Project_OSG203/
+```
+## Sửa Shell
 ```bash
 nano ~/.bashrc
 # hoặc nano ~/.zshrc nếu bạn dùng Zsh
