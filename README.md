@@ -10,34 +10,25 @@ Sử dụng các công cụ AI để xây dựng hệ thống bảo mật file t
 
 
 # Các tài nguyên cần thiết
-## Python cho Linux
-- Ubuntu/Desbian
-``` bash
+- python
+- pip
+- cryptodome
+- llm
+## Ubuntu/Desbian
+```
 sudo apt install python3
-```
-- CentOS/Red Hat
-``` bash
-sudo dnf install python3
-```
-
-## Cryptodome
-- Ubuntu/Desbian
-``` bash
 sudo apt install python3-pip -y
 pip3 install pycryptodome
+pip3 install llm
 ```
-- CentOS/Red Hat
-``` bash
+## CentOS/Red Hat
+```
+sudo dnf install python3
 sudo dnf install python3-pip -y
 pip3 install pycryptodome
+pip3 install llm
 ```
-
-# Cách cài đặt file
-## Tải file 
-```bash
-git clone https://github.com/thanh1v/Project_OSG203/
-```
-## Sửa Shell
+# Sửa Shell
 ```bash
 nano ~/.bashrc
 # hoặc nano ~/.zshrc nếu bạn dùng Zsh
