@@ -6,6 +6,7 @@ import json
 import os
 import log
 import secure_shell
+import set_mode
 
 # Đọc file .encrypt.py
 import importlib.util
@@ -57,10 +58,11 @@ def authenticate():
             plt_password = aes.aes_decrypt(aes.key, enc_password)
 
             if password_input == plt_password:
-                role = account_data.get("role")                     # chưa sử dụng!!
+                role = account_data.get("role")                     
                 print("=== Đăng nhập thành công ===")
                 print(f"Chào mừng {username_input}")
                 log.handle_login(username_input,role)
+                set_mode.chamge_mode(role)
                 secure_shell.access(role)
                 return True
             
