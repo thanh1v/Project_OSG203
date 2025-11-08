@@ -54,13 +54,13 @@ def main():
     print("     (2) command_log.txt")
     choice = input("Chọn tệp để phân tích (1 hoặc 2): ")
     if choice == '1':
-        file_to_analyze = 'login.log'
+        path_file_to_analyze = f'{os.getcwd()}/login.log'
     elif choice == '2':
-        file_to_analyze = 'command_log.txt'
+        path_file_to_analyze = f'{os.getcwd()}/command_log.txt'
     else:
         print("Lựa chọn không hợp lệ. Vui lòng chọn 1 hoặc 2.")
         exit(1)
-    analyze_file(file_to_analyze)
+    analyze_file(path_file_to_analyze)
 
 def analyze_file(file_path):
     print("***Truy cập vào trang web https://aistudio.google.com/app/u/1/api-keys để lấy Gemini API key.***\n")
