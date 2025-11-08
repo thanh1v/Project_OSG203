@@ -2,86 +2,102 @@
 
 import llm
 import os
-import subprocess
+import json
 
-# --- CẤU HÌNH API KEY ---
+
 def add_key():
     """Hỏi nhập key trước, nếu bỏ trống thì kiểm tra file cấu hình."""
+    config_dir = os.path.expanduser("~/.config/llm")
+    config_path = os.path.join(config_dir, "keys.json")
+
     user_key = input("Nhập Gemini API key (bỏ qua nếu đã có): ").strip()
 
-    config_path = os.path.expanduser("~/.config/llm/keys.json")
-
-    # Nếu nhập key
+    # --- Nếu người dùng nhập key ---
     if user_key:
         try:
-            process = subprocess.Popen(
-                ["llm", "keys", "set", "gemini"],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
-            out, err = process.communicate(input=user_key + "\n")
+            os.makedirs(config_dir, exist_ok=True)
 
-            if process.returncode == 0:
-                print("Đã thêm key cho Gemini thành công.\n")
-            else:
-                print(f"Lỗi khi thiết lập key: {err or out}")
-        except FileNotFoundError:
-            print("Chưa cài đặt thư viện 'llm'. Vui lòng chạy: pip install llm")
-            exit(1)
-        return 
+            # Nếu file đã tồn tại → load, nếu không → tạo mới
+            data = {}
+            if os.path.exists(config_path):
+                with open(config_path, encoding="utf-8") as f:
+                    try:
+                        data = json.load(f)
+                    except json.JSONDecodeError:
+                        data = {}
 
-    # Nếu không nhập key
+            data["gemini"] = user_key  # cập nhật key
+
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+
+            print(f" Đã lưu Gemini API key vào {config_path}\n")
+            return
+
+        except Exception as e:
+            print(f" Lỗi khi lưu key: {e}")
+            return
+
+    # --- Nếu không nhập key ---
     if os.path.exists(config_path):
-        with open(config_path, encoding="utf-8") as f:
-            content = f.read()
-            if '"gemini"' in content:
-                print("Đã phát hiện Gemini API key, bỏ qua bước thêm key.\n")
+        try:
+            with open(config_path, encoding="utf-8") as f:
+                data = json.load(f)
+
+            if "gemini" in data and data["gemini"].strip():
+                print(" Đã phát hiện Gemini API key, bỏ qua bước thêm key.\n")
                 return
             else:
-                print("Không tìm thấy key cho Gemini trong cấu hình.")
+                print(" Không tìm thấy key của Gemini trong file cấu hình.")
+        except Exception as e:
+            print(f" Lỗi đọc file config: {e}")
     else:
-        print("Không tìm thấy tệp cấu hình key.")
+        print(" Không tìm thấy file cấu hình key.")
 
-    # Nếu đến đây mà chưa có key → yêu cầu nhập lại
-    print("\nVui lòng nhập Gemini API key để tiếp tục.")
+    print("\n Bạn cần nhập Gemini API key để tiếp tục.")
+    add_key()  # hỏi lại
+
+
+def analyze_file(file_path):
+    print("***Truy cập https://aistudio.google.com/app/u/1/api-keys để lấy Gemini API key.***\n")
     add_key()
+
+    model = llm.get_model("gemini-2.5-flash")
+
+    attachments = [llm.Attachment(path=file_path)]
+
+    try:
+        print(" Đang phân tích, vui lòng chờ...")
+        response = model.prompt(
+            "Phân tích tệp đính kèm và đưa ra các hoạt động đáng chú ý hoặc bất thường được ghi lại trong tệp này.",
+            attachments=attachments
+        )
+        print("=" * 40)
+        print(response.text())
+        print("=" * 40)
+
+    except Exception as e:
+        print(f" Lỗi khi gọi API: {e}")
+
 
 def main():
     print("======== Kiểm tra log bằng Gemini AI ========")
     print("     (1) login.log")
     print("     (2) command_log.txt")
-    choice = input("Chọn tệp để phân tích (1 hoặc 2): ")
+
+    choice = input("Chọn tệp để phân tích (1 hoặc 2): ").strip()
+
+    cwd = os.getcwd()
     if choice == '1':
-        path_file_to_analyze = f'{os.getcwd()}/login.log'
+        target = f"{cwd}/login.log"
     elif choice == '2':
-        path_file_to_analyze = f'{os.getcwd()}/command_log.txt'
+        target = f"{cwd}/command_log.txt"
     else:
-        print("Lựa chọn không hợp lệ. Vui lòng chọn 1 hoặc 2.")
+        print(" Lựa chọn không hợp lệ.")
         exit(1)
-    analyze_file(path_file_to_analyze)
 
-def analyze_file(file_path):
-    print("***Truy cập vào trang web https://aistudio.google.com/app/u/1/api-keys để lấy Gemini API key.***\n")
-    add_key()
-    model = llm.get_model("gemini-2.5-flash")
+    analyze_file(target)
 
-    attachments = [
-        llm.Attachment(path=file_path),
-    ]
-
-    # --- GỌI API ---
-    try:
-        response = model.prompt(
-            "Phân tích tệp đính kèm và đưa ra các hoạt động đáng chú ý hoặc bất thường được ghi lại trong tệp này.",
-            attachments=attachments
-        )
-        print("="*40)
-        print(response.text())
-        print("="*40)
-    except Exception as e:
-        print(f"Đã xảy ra lỗi: {e}")
 
 if __name__ == "__main__":
     main()
