@@ -18,9 +18,9 @@ logging.basicConfig(
 def log_event(user, role, event_type, status=None):
     
     if status:
-        logging.info(f"{event_type.upper()} {user} - {role} - {status}")
+        logging.info(f"{event_type.upper()} {user} - role:{role} - {status}")
     else:
-        logging.info(f"{event_type.upper()} {user} - {role}")
+        logging.info(f"{event_type.upper()} {user} - role:{role}")
 
 def check_alerts(user):
     """Kiểm tra số lần đăng nhập và cảnh báo"""
