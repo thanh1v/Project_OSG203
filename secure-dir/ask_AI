@@ -69,7 +69,7 @@ def analyze_file(file_path):
     try:
         print(" Đang phân tích, vui lòng chờ...")
         response = model.prompt(
-            "Phân tích tệp đính kèm và đưa ra các hoạt động đáng chú ý hoặc bất thường được ghi lại trong tệp này.",
+            "Phân tích tệp đính kèm và đưa ra các hoạt động đáng chú ý hoặc bất thường được ghi lại trong tệp này. Xong rồi đưa ra tóm tắt ngắn gọn về những phát hiện chính.",
             attachments=attachments
         )
         print("=" * 40)
@@ -87,7 +87,7 @@ def main():
 
     choice = input("Chọn tệp để phân tích (1 hoặc 2): ").strip()
 
-    cwd = os.getcwd()
+    cwd = os.getcwd() 
     if choice == '1':
         target = f"{cwd}/login.log"
     elif choice == '2':
