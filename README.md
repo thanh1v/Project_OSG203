@@ -20,6 +20,7 @@ sudo apt install python3
 sudo apt install python3-pip -y
 pip3 install pycryptodome
 pip3 install llm
+pip install llm-gemini
 ```
 ## CentOS/Red Hat
 ```
@@ -27,6 +28,7 @@ sudo dnf install python3
 sudo dnf install python3-pip -y
 pip3 install pycryptodome
 pip3 install llm
+pip install llm-gemini
 ```
 # Cách cài đặt file
 ## Tải file 
